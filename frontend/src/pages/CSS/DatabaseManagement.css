@@ -1,0 +1,155 @@
+.container {
+  padding: 20px;
+  text-align: center;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 colonne per riga */
+  gap: 20px; /* Distanza tra le card */
+  justify-content: center; /* Centra gli elementi */
+  align-items: center; /* Centra gli elementi */
+  max-width: 800px; /* Limita la larghezza massima */
+  margin: 0 auto; /* Centra la griglia nella pagina */
+}
+
+
+.card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Ombra più accentuata */
+  transition: all 0.3s ease-in-out;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  text-decoration: none;
+  color: black;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(255, 255, 255, 0.4); /* Ombra più forte al passaggio del mouse */
+   background-color: #f0f0f0; /* COLORE CARD */
+   transform: translateY(-3px);
+}
+
+
+.card span {
+  font-size: 20px;
+}
+
+.card-title {
+  font-size: 14px; /* Riduce la dimensione del testo */
+  font-weight: bold;
+  text-align: center;
+}
+
+.card-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%; /* Assicura il posizionamento centrale */
+}
+
+.card-description {
+  font-size: 14px;
+  color: gray;
+}
+
+.magazzino-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  text-decoration: none;
+  background: #ff9500;
+  color: white;
+  border-radius: 5px;
+  transition: 0.3s;
+  border: none;
+  cursor: pointer;
+}
+
+.magazzino-button:hover {
+  background: #cc7700;
+}
+
+.description {
+  display: none;
+}
+
+
+.home-button {
+  display: inline-block;
+  padding: 15px 30px; /* Aumenta il padding per ingrandire il bottone */
+  font-size: 18px; /* Testo più grande */
+  font-weight: bold; /* Testo in grassetto */
+  background-color: #0056b3; /* Colore di sfondo blu */
+  color: white;
+  border: none;
+  border-radius: 8px; /* Angoli arrotondati */
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.home-button:hover {
+  background-color: #003f80; /* Cambia colore al passaggio del mouse */
+}
+
+.magazzino-button {
+  display: inline-block;
+  padding: 15px 30px; /* Aumenta il padding per ingrandire il bottone */
+  font-size: 18px; /* Testo più grande */
+  font-weight: bold;
+  background-color: #ff9800; /* Colore arancione */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.magazzino-button:hover {
+  background-color: #e68900; /* Cambia colore al passaggio del mouse */
+}
+
+/*****/
+
+.nav-button {
+  background-color: #007bff; /* Blu */
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-button:hover {
+  background-color: #0056b3; /* Blu più scuro */
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Per aggiungere un'icona accanto al testo */
+.nav-button span {
+  margin-left: 5px;
+}
+
+/* Stile per i titoli */
+.title {
+  color: white; /* Rende il testo bianco */
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+

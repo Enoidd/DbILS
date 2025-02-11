@@ -1,0 +1,18 @@
+/* Questo CSS definisce una classe .blinking-border che applica un bordo rosso di 2px e un'animazione chiamata "blink" che dura 1 secondo e si ripete all'infinito. L'animazione varia il colore del bordo: all'inizio (0%) e alla fine (100%) il bordo è rosso, mentre a metà ciclo (50%) diventa trasparente, creando così un effetto di lampeggio continuo. */
+.blinking-border {
+  border: 2px solid red;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0% {
+    border-color: red;
+  }
+  50% {
+    border-color: transparent;
+  }
+  100% {
+    border-color: red;
+  }
+}
+

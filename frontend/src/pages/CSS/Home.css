@@ -1,0 +1,56 @@
+/* Stile Home */
+.home-container {
+  text-align: center;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 20px;
+}
+
+/* Pulsanti della Home */
+.home-page-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 220px;
+  height: 80px;
+  background-color: white;
+  color: black;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 12px;
+  text-decoration: none;
+  box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease-in-out;
+  margin: 50px auto;
+  border: none;
+  cursor: pointer;
+}
+
+/* Effetto hover */
+.home-page-button:hover {
+  box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.3);
+  transform: translateY(-3px);
+}
+
+/* Titolo */
+.home-title {
+  color: white;
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+/* Lista senza puntini */
+.home-list {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 50px;
+}
+
+.home-list li {
+  margin-bottom: 20px; /* Aggiunge distanza tra i pulsanti */
+}
+
