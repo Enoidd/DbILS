@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.40, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.41, for Linux (x86_64)
 --
 -- Host: localhost    Database: Database_ils
 -- ------------------------------------------------------
--- Server version	8.0.40-0ubuntu0.24.04.1
+-- Server version	8.0.41-0ubuntu0.24.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -35,7 +35,7 @@ CREATE TABLE `Attività` (
   PRIMARY KEY (`ID`),
   KEY `FK_Attività_Responsabile` (`Responsabile`),
   CONSTRAINT `FK_Attività_Responsabile` FOREIGN KEY (`Responsabile`) REFERENCES `Responsabili` (`ID`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,7 +44,6 @@ CREATE TABLE `Attività` (
 
 LOCK TABLES `Attività` WRITE;
 /*!40000 ALTER TABLE `Attività` DISABLE KEYS */;
-INSERT INTO `Attività` VALUES (1,'2024-12-01','2024-12-15','Manutenzione Server','Descrizione dettagliata','','Prova',1,'OnCallSupport'),(2,'2024-12-06',NULL,'Test Correttive Critica',NULL,NULL,NULL,1,'Correttive'),(3,'2024-12-06',NULL,'Test FieldEngineering Non Critica',NULL,NULL,NULL,1,'FieldEngineering'),(4,'2024-12-06',NULL,'Test OnCallSupport',NULL,NULL,NULL,1,'OnCallSupport'),(5,'2024-12-06',NULL,'Test OnSiteSupport',NULL,NULL,NULL,1,'OnSiteSupport');
 /*!40000 ALTER TABLE `Attività` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -115,7 +114,7 @@ CREATE TABLE `Base` (
   UNIQUE KEY `Base_Nome_3` (`Base_Nome`),
   UNIQUE KEY `Base_Nome_4` (`Base_Nome`),
   CONSTRAINT `Base_chk_1` CHECK (regexp_like(`Base_Stormo`,_utf8mb4'^[a-zA-Z0-9]+$'))
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -124,7 +123,6 @@ CREATE TABLE `Base` (
 
 LOCK TABLES `Base` WRITE;
 /*!40000 ALTER TABLE `Base` DISABLE KEYS */;
-INSERT INTO `Base` VALUES (1,'wce','wecwe','3223','243','cvsdc','6'),(2,'Galatina','Via Galatinadf','12334','1234534','Galatina Giancarloff','615'),(4,'Velletri','Viale','108','00049','Base_PROVA1','6');
 /*!40000 ALTER TABLE `Base` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -159,7 +157,6 @@ CREATE TABLE `FieldEngineering` (
 
 LOCK TABLES `FieldEngineering` WRITE;
 /*!40000 ALTER TABLE `FieldEngineering` DISABLE KEYS */;
-INSERT INTO `FieldEngineering` VALUES (1,1,NULL,2,'MS',3,'2025-01-03','non critica',NULL);
 /*!40000 ALTER TABLE `FieldEngineering` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -318,7 +315,7 @@ CREATE TABLE `Gruppo` (
   UNIQUE KEY `NomeGruppo_2` (`NomeGruppo`),
   KEY `FK_BaseGruppo` (`BaseID`),
   CONSTRAINT `FK_BaseGruppo` FOREIGN KEY (`BaseID`) REFERENCES `Base` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -327,7 +324,6 @@ CREATE TABLE `Gruppo` (
 
 LOCK TABLES `Gruppo` WRITE;
 /*!40000 ALTER TABLE `Gruppo` DISABLE KEYS */;
-INSERT INTO `Gruppo` VALUES (2,'Gruppo2','',1);
 /*!40000 ALTER TABLE `Gruppo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -344,7 +340,7 @@ CREATE TABLE `Magazzino` (
   `Palazzina` enum('M0','W0') NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Nome` (`Nome`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -353,6 +349,7 @@ CREATE TABLE `Magazzino` (
 
 LOCK TABLES `Magazzino` WRITE;
 /*!40000 ALTER TABLE `Magazzino` DISABLE KEYS */;
+INSERT INTO `Magazzino` VALUES (1,'Magazzino A','M0'),(2,'Magazzino B','W0');
 /*!40000 ALTER TABLE `Magazzino` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -365,7 +362,6 @@ DROP TABLE IF EXISTS `MaterialiMagazzino`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `MaterialiMagazzino` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `MagazzinoID` int NOT NULL,
   `Categoria` enum('Consumabile','Hardware') NOT NULL,
   `Tipologia` varchar(255) NOT NULL,
   `Marca` varchar(255) DEFAULT NULL,
@@ -374,10 +370,9 @@ CREATE TABLE `MaterialiMagazzino` (
   `SN` varchar(255) DEFAULT NULL,
   `Quantità` int NOT NULL DEFAULT '0',
   `DataArrivo` date NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `MagazzinoID` (`MagazzinoID`),
-  CONSTRAINT `MaterialiMagazzino_ibfk_1` FOREIGN KEY (`MagazzinoID`) REFERENCES `Magazzino` (`ID`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `NomePalazzina` enum('M0','W0') NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -386,6 +381,7 @@ CREATE TABLE `MaterialiMagazzino` (
 
 LOCK TABLES `MaterialiMagazzino` WRITE;
 /*!40000 ALTER TABLE `MaterialiMagazzino` DISABLE KEYS */;
+INSERT INTO `MaterialiMagazzino` VALUES (15,'Hardware','T2','Ma2','Mo2','Pn2','Sn2',2,'2025-02-11','W0'),(16,'Consumabile','T3','Ma3','Mo3','Pn3','Sn3',3,'2025-02-11','W0');
 /*!40000 ALTER TABLE `MaterialiMagazzino` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -399,19 +395,17 @@ DROP TABLE IF EXISTS `Movimentazioni`;
 CREATE TABLE `Movimentazioni` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `MaterialeID` int NOT NULL,
-  `MagazzinoID` int NOT NULL,
   `TipoMovimento` enum('Prelievo','Ritiro') NOT NULL,
   `Quantità` int NOT NULL,
   `DataMovimento` date NOT NULL,
   `BaseID` int DEFAULT NULL,
   `GruppoID` int DEFAULT NULL,
+  `NomePalazzina` enum('M0','W0') NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `MaterialeID` (`MaterialeID`),
-  KEY `MagazzinoID` (`MagazzinoID`),
   KEY `BaseID` (`BaseID`),
   KEY `GruppoID` (`GruppoID`),
   CONSTRAINT `Movimentazioni_ibfk_1` FOREIGN KEY (`MaterialeID`) REFERENCES `MaterialiMagazzino` (`ID`) ON DELETE CASCADE,
-  CONSTRAINT `Movimentazioni_ibfk_2` FOREIGN KEY (`MagazzinoID`) REFERENCES `Magazzino` (`ID`) ON DELETE CASCADE,
   CONSTRAINT `Movimentazioni_ibfk_3` FOREIGN KEY (`BaseID`) REFERENCES `Base` (`ID`) ON DELETE CASCADE,
   CONSTRAINT `Movimentazioni_ibfk_4` FOREIGN KEY (`GruppoID`) REFERENCES `Gruppo` (`ID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -438,16 +432,14 @@ CREATE TABLE `OnCallSupport` (
   `TipologiaRichiesta` enum('MS','CM','EX') NOT NULL,
   `Criticita` enum('critica','non critica') NOT NULL,
   `DataRisoluzione` date DEFAULT NULL,
-  `MagazzinoID` int NOT NULL,
   `BaseID` int NOT NULL,
   `Progressivo` int NOT NULL,
   `AttivitàID` int NOT NULL,
   `Allegato` varchar(255) DEFAULT NULL,
+  `NomePalazzina` enum('M0','W0') NOT NULL,
   PRIMARY KEY (`ID`),
-  KEY `MagazzinoID` (`MagazzinoID`),
   KEY `FK_OnCallSupport_Base` (`BaseID`),
   KEY `FK_OnCallSupport_Attività` (`AttivitàID`),
-  CONSTRAINT `FK_OnCallSupport_Attività` FOREIGN KEY (`AttivitàID`) REFERENCES `Attività` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_OnCallSupport_Base` FOREIGN KEY (`BaseID`) REFERENCES `Base` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -600,7 +592,6 @@ CREATE TABLE `OnSiteSupport` (
   `TipologiaRichiesta` enum('MS','CM','TC','I') NOT NULL,
   `Criticita` enum('critica','non critica') NOT NULL,
   `DataRisoluzione` date DEFAULT NULL,
-  `MagazzinoID` int NOT NULL,
   `TipologiaTraining` enum('Basic Pilot','Personalized','System Administrator') DEFAULT NULL,
   `BaseID` int NOT NULL,
   `Progressivo` int NOT NULL,
@@ -608,13 +599,12 @@ CREATE TABLE `OnSiteSupport` (
   `Allegato` varchar(255) DEFAULT NULL,
   `MaterialeID` int NOT NULL,
   `Quantità` int NOT NULL,
+  `NomePalazzina` enum('M0','W0') NOT NULL,
   PRIMARY KEY (`ID`),
-  KEY `MagazzinoID` (`MagazzinoID`),
   KEY `FK_OnSiteSupport_Base` (`BaseID`),
   KEY `FK_OnSiteSupport_Attività` (`AttivitàID`),
-  CONSTRAINT `FK_OnSiteSupport_Attività` FOREIGN KEY (`AttivitàID`) REFERENCES `Attività` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_OnSiteSupport_Base` FOREIGN KEY (`BaseID`) REFERENCES `Base` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -766,7 +756,7 @@ CREATE TABLE `Responsabili` (
   `Cognome` varchar(255) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Nome` (`Nome`,`Cognome`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -775,7 +765,6 @@ CREATE TABLE `Responsabili` (
 
 LOCK TABLES `Responsabili` WRITE;
 /*!40000 ALTER TABLE `Responsabili` DISABLE KEYS */;
-INSERT INTO `Responsabili` VALUES (2,'ad',''),(1,'Fabio','Menichelli'),(3,'fd','dfv');
 /*!40000 ALTER TABLE `Responsabili` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -799,7 +788,7 @@ CREATE TABLE `Riferimento_AMI` (
   KEY `FK_RiferimentoAMI_Gruppo` (`GruppoID`),
   CONSTRAINT `FK_RiferimentoAMI_Gruppo` FOREIGN KEY (`GruppoID`) REFERENCES `Gruppo` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `Riferimento_AMI_chk_1` CHECK (((`Numero_Telefono` is not null) or (`Numero_Cellulare` is not null)))
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -808,35 +797,7 @@ CREATE TABLE `Riferimento_AMI` (
 
 LOCK TABLES `Riferimento_AMI` WRITE;
 /*!40000 ALTER TABLE `Riferimento_AMI` DISABLE KEYS */;
-INSERT INTO `Riferimento_AMI` VALUES (4,'S. Ten.','dfsvdfvs','fvasf','vfsdfv','343325','',2),(6,'S. Ten.','adsad','ecfwe','rrvgaeg','45632565','',2),(7,'S. Ten.','dscfhnf','sddfxhn','sdsfdfhnf','432534565','',2);
 /*!40000 ALTER TABLE `Riferimento_AMI` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Scaffali`
---
-
-DROP TABLE IF EXISTS `Scaffali`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `Scaffali` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `MagazzinoID` int NOT NULL,
-  `Colonna` enum('AM0','BM0','CM0','DM0','EM0','FM0','AW0','BW0','CW0','DW0','EW0','FW0') NOT NULL,
-  `Ripiano` enum('AM01','AM02','AM03','AM04','AM05','FM01','FM02','FM03','FM04','FM05','AW01','AW02','AW03','AW04','AW05','FW01','FW02','FW03','FW04','FW05') NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `MagazzinoID` (`MagazzinoID`),
-  CONSTRAINT `Scaffali_ibfk_1` FOREIGN KEY (`MagazzinoID`) REFERENCES `Magazzino` (`ID`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Scaffali`
---
-
-LOCK TABLES `Scaffali` WRITE;
-/*!40000 ALTER TABLE `Scaffali` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Scaffali` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -848,4 +809,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-20 16:00:53
+-- Dump completed on 2025-02-11 12:50:45
