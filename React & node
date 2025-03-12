@@ -1,0 +1,518 @@
+2️⃣ React e Node.js sullo Stesso Server → Monolitico
+
+📌 React viene servito direttamente dal backend Node.js, quindi tutto gira su un unico server.
+📌 Come funziona?
+
+    Quando l'utente visita il sito, Node.js serve la pagina React come file statico.
+    Il backend Node.js ospita sia il frontend che le API.
+    📌 Vantaggi:
+    Facile da gestire (nessun server separato per il frontend).
+    Minore latenza tra frontend e backend.
+    📌 Esempio setup:
+    Dopo aver creato l’app React, compiliamo i file statici e li serviamo con Node.js:
+
+=============================================================
+
+Struttura del Progetto
+
+Il progetto è organizzato in due parti principali:
+
+    Backend (server):
+        Tecnologie: Node.js, Express, MySQL.
+        Ruolo: Fornisce le API REST per comunicare con il database MySQL.
+        Funzioni principali:
+            Connessione al database.
+            Fornire dati (es. elenco delle attività) tramite API.
+            Servire i file React per la parte frontend.
+
+    Frontend (React):
+        Tecnologie: React.js.
+        Ruolo: È l'interfaccia grafica con cui l'utente interagisce.
+        Funzioni principali:
+            Comunicare con le API del server per recuperare o inviare dati.
+            Visualizzare i dati (es. elenco delle attività) all'utente.
+            Consentire azioni come creare, aggiornare ed eliminare attività.
+
+1️⃣ Backend con Node.js
+
+Abbiamo configurato un server con Node.js e Express che:
+
+    Si connette a MySQL:
+        Utilizziamo la libreria mysql per stabilire una connessione con il database. La configurazione include:
+            host: L'indirizzo del server MySQL (es. localhost).
+            user: L'utente MySQL (es. root).
+            password: La password associata a quell'utente (es. Giordana94!).
+            database: Il nome del database (es. gestionedb).
+
+    Espone API REST:
+        API /api/attivita (GET): Fornisce l'elenco di tutte le attività nella tabella Attività. Quando un client (come React) fa una richiesta a questa API, il server esegue una query SQL:
+
+    SELECT * FROM Attività;
+
+    E restituisce i risultati in formato JSON.
+
+Serve i file React (Frontend):
+
+    Quando il progetto React viene compilato (con npm run build), i file statici risultanti (HTML, CSS, JavaScript) vengono serviti direttamente dal backend.
+    Questo è gestito con Express e il metodo:
+
+        app.use(express.static(path.join(__dirname, "../frontend/build")));
+        app.get("*", (req, res) => {
+            res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
+        });
+
+2️⃣ Frontend con React
+
+Abbiamo creato un'applicazione React che:
+
+    Comunica con il backend tramite API:
+        Usiamo la libreria axios per inviare richieste HTTP al backend. Ad esempio:
+
+    axios.get("/api/attivita")
+        .then(response => setAttivita(response.data));
+
+    Questo recupera i dati delle attività dal backend e li memorizza in uno stato React.
+
+Visualizza i dati (CRUD):
+
+    La lista delle attività viene mostrata con un componente React che cicla sui dati ricevuti dall'API e li rende in una lista:
+
+    <ul>
+        {attivita.map(att => (
+            <li key={att.ID}>{att.Titolo} - {att.Descrizione}</li>
+        ))}
+    </ul>
+
+Permette di creare, aggiornare ed eliminare dati (CRUD):
+
+    Creazione: L'utente inserisce titolo e descrizione, e React invia una richiesta POST all'API:
+
+axios.post("/api/attivita", { Titolo: titolo, Descrizione: descrizione });
+
+Eliminazione: L'utente può eliminare un'attività cliccando su un bottone, che invia una richiesta DELETE:
+
+        axios.delete(`/api/attivita/${id}`);
+
+Come interagiscono le parti (Flusso dei dati)
+Esempio pratico: Visualizzazione dell'elenco attività
+
+    L'utente visita http://localhost:5000.
+    Il server Node.js:
+        Serve i file React dalla cartella frontend/build.
+        React viene caricato nel browser dell'utente.
+    React invia una richiesta GET all'API /api/attivita:
+
+axios.get("/api/attivita");
+
+Node.js riceve la richiesta, esegue una query SQL al database MySQL:
+
+    SELECT * FROM Attività;
+
+    MySQL restituisce i dati al server, che li invia a React come risposta JSON.
+    React riceve i dati e li visualizza nella pagina web come una lista di attività.
+
+Esempio pratico: Creazione di una nuova attività
+
+    L'utente inserisce i dettagli di un'attività (es. Titolo: "Nuovo Task", Descrizione: "Descrizione del task") e clicca su "Aggiungi".
+    React invia una richiesta POST all'API /api/attivita con i dati:
+
+axios.post("/api/attivita", {
+    Titolo: "Nuovo Task",
+    Descrizione: "Descrizione del task"
+});
+
+Node.js riceve i dati e li salva nel database MySQL con una query SQL:
+
+INSERT INTO Attività (Titolo, Descrizione) VALUES ('Nuovo Task', 'Descrizione del task');
+
+Node.js restituisce una risposta di successo a React.
+React aggiorna automaticamente la lista delle attività chiamando di nuovo l'API /api/attivita.
+
+
+=============================================================
+
+
+1️⃣ Struttura del Progetto
+
+📂 gestionedb/
+├── 📁 backend/ (Node.js + Express + MySQL)
+│ ├── server.js
+│ ├── package.json
+│ ├── .env
+│ ├── 📁 database/ (Query SQL)
+│ ├── 📁 routes/ (API REST)
+├── 📁 frontend/ (React.js)
+│ ├── src/ (Componenti React)
+│ ├── package.json
+
+
+2️⃣ Configurazione del Backend (Node.js + Express)
+Installa Node.js e crea il server
+
+1️⃣ Apri il terminale e crea il backend:
+
+mkdir gestionedb && cd gestionedb
+mkdir backend && cd backend
+npm init -y
+npm install express mysql cors body-parser dotenv path
+
+2️⃣ Crea un file server.js in backend/ con il codice base:
+
+const express = require("express");
+const mysql = require("mysql");
+const cors = require("cors");
+const path = require("path");
+require("dotenv").config();
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+const db = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "gestionedb",
+});
+
+db.connect(err => {
+    if (err) throw err;
+    console.log("✅ Database connesso!");
+});
+
+// API per ottenere tutte le attività
+app.get("/api/attivita", (req, res) => {
+    db.query("SELECT * FROM Attività", (err, result) => {
+        if (err) return res.status(500).send(err);
+        res.json(result);
+    });
+});
+
+// Servire React in produzione
+app.use(express.static(path.join(__dirname, "../frontend/build")));
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
+});
+
+app.listen(5000, () => {
+    console.log("🚀 Server avviato su http://localhost:5000");
+});
+
+3️⃣ Avvia il backend:
+
+node server.js
+
+3️⃣ Configurazione del Frontend (React)
+
+1️⃣ Torna alla cartella principale e crea il frontend:
+
+cd ..
+npx create-react-app frontend
+cd frontend
+npm install axios react-router-dom
+
+2️⃣ Crea un file src/pages/Attivita.js in frontend/src/pages/ per visualizzare le attività:
+
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+const Attivita = () => {
+    const [attivita, setAttivita] = useState([]);
+
+    useEffect(() => {
+        axios.get("/api/attivita").then(response => {
+            setAttivita(response.data);
+        });
+    }, []);
+
+    return (
+        <div>
+            <h2>Lista Attività</h2>
+            <ul>
+                {attivita.map(att => (
+                    <li key={att.ID}>{att.Titolo} - {att.Descrizione}</li>
+                ))}
+            </ul>
+        </div>
+    );
+};
+
+export default Attivita;
+
+3️⃣ Modifica frontend/src/App.js per includere la pagina:
+
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Attivita from "./pages/Attivita";
+
+function App() {
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<Attivita />} />
+            </Routes>
+        </Router>
+    );
+}
+
+export default App;
+
+4️⃣ Compila React e integra nel backend:
+
+cd frontend
+npm run build
+
+Ora i file React sono pronti in frontend/build/.
+
+5️⃣ Torna al backend e avvia il server con React incluso:
+
+cd ../backend
+node server.js
+
+(SE NON PARTE ANDARE AL PUNTO 1)
+
+
+✅ React e Node.js girano sullo stesso server.
+✅ Non serve configurare hosting separato per il frontend.
+✅ Facile da gestire e distribuire su un VPS o un server cloud.
+
+
+=====
+
+(PUNTO 1)
+
+installazione web-vitals manualmente:
+
+    Apri il terminale nella cartella del progetto frontend e installa la libreria:
+
+npm install web-vitals
+
+Dopo aver installato, riprova a creare la build:
+
+npm run build
+
+=====
+
+(ASSICURARSI CHE NEL FILE ../backend/server.js ci sia user - passwd - nome_database corretti, in caso creare la password e/o database)
+
+sudo mysql -u root -p
+
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'Giordana94!';
+Query OK, 0 rows affected (0,02 sec)
+
+FLUSH PRIVILEGES; (per applicare le modifiche)
+
+EXIT;
+
+CREATE DATABASE gestionedb;
+
+=====
+
+
+4️⃣ Test Finale
+
+Ora puoi aprire il browser e visitare:
+🔗 http://localhost:5000 → Dovresti vedere la lista delle attività.
+
+
+📌 1. Miglioriamo il Backend
+
+Apri backend/server.js e aggiorniamolo per gestire il CRUD completo e il login.
+
+1️⃣ Installa i pacchetti necessari
+
+cd backend
+npm install bcryptjs jsonwebtoken express-validator
+
+2️⃣ Creiamo la gestione utenti (Login + Registrazione) - NON FATTO
+
+📌 Aggiungi il codice seguente in server.js
+
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { body, validationResult } = require("express-validator");
+
+const SECRET_KEY = "supersegreto"; // Sostituiscilo con una variabile d'ambiente
+
+// Registrazione utente
+app.post("/api/register", [
+    body("email").isEmail(),
+    body("password").isLength({ min: 6 })
+], (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
+    const { email, password } = req.body;
+    const hashedPassword = bcrypt.hashSync(password, 10);
+
+    db.query("INSERT INTO utenti (email, password) VALUES (?, ?)", [email, hashedPassword], (err) => {
+        if (err) return res.status(500).send(err);
+        res.json({ message: "Utente registrato!" });
+    });
+});
+
+// Login utente
+app.post("/api/login", (req, res) => {
+    const { email, password } = req.body;
+
+    db.query("SELECT * FROM utenti WHERE email = ?", [email], (err, results) => {
+        if (err || results.length === 0) return res.status(401).json({ message: "Utente non trovato!" });
+
+        const user = results[0];
+        if (!bcrypt.compareSync(password, user.password)) return res.status(401).json({ message: "Password errata!" });
+
+        const token = jwt.sign({ id: user.ID, email: user.email }, SECRET_KEY, { expiresIn: "1h" });
+        res.json({ token });
+    });
+});
+
+✅ Ora possiamo gestire registrazione e login!
+📌 2. Implementiamo il CRUD Completo
+
+Aggiungiamo API per creare, leggere, aggiornare ed eliminare attività.
+1️⃣ CRUD per Attività
+
+Aggiungi queste API in server.js:
+
+// GET - Ottieni tutte le attività
+app.get("/api/attivita", (req, res) => {
+    db.query("SELECT * FROM Attività", (err, result) => {
+        if (err) return res.status(500).send(err);
+        res.json(result);
+    });
+});
+
+// POST - Crea una nuova attività
+app.post("/api/attivita", (req, res) => {
+    const { Titolo, Descrizione, Responsabile, DataInizio } = req.body;
+    db.query(
+        "INSERT INTO Attività (Titolo, Descrizione, Responsabile, DataInizio) VALUES (?, ?, ?, ?)",
+        [Titolo, Descrizione, Responsabile, DataInizio],
+        (err, result) => {
+            if (err) return res.status(500).send(err);
+            res.json({ message: "Attività creata!", id: result.insertId });
+        }
+    );
+});
+
+// PUT - Aggiorna un'attività
+app.put("/api/attivita/:id", (req, res) => {
+    const { Titolo, Descrizione, Responsabile, DataInizio } = req.body;
+    db.query(
+        "UPDATE Attività SET Titolo=?, Descrizione=?, Responsabile=?, DataInizio=? WHERE ID=?",
+        [Titolo, Descrizione, Responsabile, DataInizio, req.params.id],
+        (err) => {
+            if (err) return res.status(500).send(err);
+            res.json({ message: "Attività aggiornata!" });
+        }
+    );
+});
+
+// DELETE - Elimina un'attività
+app.delete("/api/attivita/:id", (req, res) => {
+    db.query("DELETE FROM Attività WHERE ID=?", [req.params.id], (err) => {
+        if (err) return res.status(500).send(err);
+        res.json({ message: "Attività eliminata!" });
+    });
+});
+
+✅ Ora possiamo gestire attività da React!
+📌 3. Creiamo il Frontend per CRUD + Login
+
+Apri frontend/src/pages/Attivita.js e aggiorna il codice per creare, modificare ed eliminare attività.
+
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+const Attivita = () => {
+    const [attivita, setAttivita] = useState([]);
+    const [titolo, setTitolo] = useState("");
+    const [descrizione, setDescrizione] = useState("");
+
+    useEffect(() => {
+        fetchAttivita();
+    }, []);
+
+    const fetchAttivita = () => {
+        axios.get("/api/attivita").then(response => {
+            setAttivita(response.data);
+        });
+    };
+
+    const creaAttivita = () => {
+        axios.post("/api/attivita", { Titolo: titolo, Descrizione: descrizione })
+            .then(() => {
+                fetchAttivita();
+                setTitolo("");
+                setDescrizione("");
+            });
+    };
+
+    const eliminaAttivita = (id) => {
+        axios.delete(`/api/attivita/${id}`).then(() => fetchAttivita());
+    };
+
+    return (
+        <div>
+            <h2>Lista Attività</h2>
+            <input type="text" placeholder="Titolo" value={titolo} onChange={(e) => setTitolo(e.target.value)} />
+            <input type="text" placeholder="Descrizione" value={descrizione} onChange={(e) => setDescrizione(e.target.value)} />
+            <button onClick={creaAttivita}>Aggiungi Attività</button>
+
+            <ul>
+                {attivita.map(att => (
+                    <li key={att.ID}>
+                        {att.Titolo} - {att.Descrizione}
+                        <button onClick={() => eliminaAttivita(att.ID)}>❌</button>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+};
+
+export default Attivita;
+
+✅ Ora React può creare ed eliminare attività!
+📌 4. Report e Notifiche
+
+Per le notifiche automatiche, possiamo usare nodemailer per inviare email quando un'attività sta per scadere.
+
+Installa nodemailer:
+
+# cd backend
+
+npm install nodemailer
+
+Aggiungi questo codice in server.js per inviare email:
+
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: { user: "tuo@email.com", pass: "password" }
+});
+
+app.post("/api/notifica", (req, res) => {
+    const mailOptions = {
+        from: "tuo@email.com",
+        to: req.body.email,
+        subject: "Attività in scadenza",
+        text: `L'attività "${req.body.titolo}" sta per scadere!`
+    };
+
+    transporter.sendMail(mailOptions, (err) => {
+        if (err) return res.status(500).send(err);
+        res.json({ message: "Notifica inviata!" });
+    });
+});
+
+✅ Ora possiamo inviare email per attività in scadenza!
+🎯 Conclusione
+
+🔹 CRUD completo per Attività, Magazzini, Materiali
+🔹 Login sicuro con bcrypt e JWT
+🔹 Report e notifiche email automatiche
+
+💡 Vuoi aggiungere ruoli utente o dashboard grafiche con grafici? Dimmi e lo implementiamo! 🚀
