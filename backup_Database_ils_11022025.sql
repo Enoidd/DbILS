@@ -114,7 +114,7 @@ CREATE TABLE `Base` (
   UNIQUE KEY `Base_Nome_3` (`Base_Nome`),
   UNIQUE KEY `Base_Nome_4` (`Base_Nome`),
   CONSTRAINT `Base_chk_1` CHECK (regexp_like(`Base_Stormo`,_utf8mb4'^[a-zA-Z0-9]+$'))
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -123,6 +123,7 @@ CREATE TABLE `Base` (
 
 LOCK TABLES `Base` WRITE;
 /*!40000 ALTER TABLE `Base` DISABLE KEYS */;
+INSERT INTO `Base` VALUES (9,'C1','V1','NC1','CAP1','N1','6');
 /*!40000 ALTER TABLE `Base` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -277,16 +278,21 @@ CREATE TABLE `GFE` (
   `Modello` varchar(255) NOT NULL,
   `DataArrivo` date NOT NULL,
   `Quantità` int NOT NULL DEFAULT '0',
-  `BaseID` int NOT NULL,
-  `GruppoID` int NOT NULL,
+  `Luogo` enum('Base','Leonardo') NOT NULL,
+  `NomePalazzina` enum('M0','W0') DEFAULT NULL,
+  `BaseID` int DEFAULT NULL,
+  `GruppoID` int DEFAULT NULL,
+  `Tipologia` enum('Monitor Sun','Mouse Sun','Tastiera Sun','Ultra45 Tower','Tadpole Viper','UPS tipo A (New)','UPS tipo B (old)') NOT NULL,
+  `Denominazione` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `SN` (`SN`),
   UNIQUE KEY `NUC` (`NUC`),
   KEY `BaseID` (`BaseID`),
   KEY `GruppoID` (`GruppoID`),
   CONSTRAINT `GFE_ibfk_1` FOREIGN KEY (`BaseID`) REFERENCES `Base` (`ID`) ON DELETE CASCADE,
-  CONSTRAINT `GFE_ibfk_2` FOREIGN KEY (`GruppoID`) REFERENCES `Gruppo` (`ID`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `GFE_ibfk_2` FOREIGN KEY (`GruppoID`) REFERENCES `Gruppo` (`ID`) ON DELETE CASCADE,
+  CONSTRAINT `chk_Denominazione` CHECK ((((`Tipologia` in (_utf8mb4'Ultra45 Tower',_utf8mb4'Tadpole Viper')) and (`Denominazione` is not null)) or ((`Tipologia` not in (_utf8mb4'Ultra45 Tower',_utf8mb4'Tadpole Viper')) and (`Denominazione` is null))))
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -315,7 +321,7 @@ CREATE TABLE `Gruppo` (
   UNIQUE KEY `NomeGruppo_2` (`NomeGruppo`),
   KEY `FK_BaseGruppo` (`BaseID`),
   CONSTRAINT `FK_BaseGruppo` FOREIGN KEY (`BaseID`) REFERENCES `Base` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -324,6 +330,7 @@ CREATE TABLE `Gruppo` (
 
 LOCK TABLES `Gruppo` WRITE;
 /*!40000 ALTER TABLE `Gruppo` DISABLE KEYS */;
+INSERT INTO `Gruppo` VALUES (27,'NG1','',9);
 /*!40000 ALTER TABLE `Gruppo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -363,7 +370,7 @@ DROP TABLE IF EXISTS `MaterialiMagazzino`;
 CREATE TABLE `MaterialiMagazzino` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `Categoria` enum('Consumabile','Hardware') NOT NULL,
-  `Tipologia` varchar(255) NOT NULL,
+  `Tipologia` enum('Toner','Consumabili Stampante','Monitor generici','Cavi','UPS tipo A (New)','UPS tipo B (old)','Tastiere Generiche','Mouse generici','Batterie Tadpole') NOT NULL,
   `Marca` varchar(255) DEFAULT NULL,
   `Modello` varchar(255) DEFAULT NULL,
   `PN` varchar(255) NOT NULL,
@@ -372,7 +379,7 @@ CREATE TABLE `MaterialiMagazzino` (
   `DataArrivo` date NOT NULL,
   `NomePalazzina` enum('M0','W0') NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -381,7 +388,7 @@ CREATE TABLE `MaterialiMagazzino` (
 
 LOCK TABLES `MaterialiMagazzino` WRITE;
 /*!40000 ALTER TABLE `MaterialiMagazzino` DISABLE KEYS */;
-INSERT INTO `MaterialiMagazzino` VALUES (15,'Hardware','T2','Ma2','Mo2','Pn2','Sn2',2,'2025-02-11','W0'),(16,'Consumabile','T3','Ma3','Mo3','Pn3','Sn3',3,'2025-02-11','W0');
+INSERT INTO `MaterialiMagazzino` VALUES (17,'Consumabile','Toner','Marca1','Modello1','PN1','SN1',1,'2025-03-10','M0');
 /*!40000 ALTER TABLE `MaterialiMagazzino` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -756,7 +763,7 @@ CREATE TABLE `Responsabili` (
   `Cognome` varchar(255) NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Nome` (`Nome`,`Cognome`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -809,4 +816,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-02-11 12:50:45
+-- Dump completed on 2025-03-11 10:55:47
